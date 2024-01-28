@@ -1,0 +1,22 @@
+{
+  "name": "stupidstate",
+  "version": "0.0.1",
+  "description": "Client-Side state storage for your frontend applications",
+  "author": "Pascal Ruscher <pascal@ruscher.dev>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pascalruscher/stupidstate.git"
+  },
+  "type": "module",
+  "scripts": {
+    "test": "vitest",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.0.12",
+    "vitest": "^1.2.1"
+  }
+}
