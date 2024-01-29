@@ -18,13 +18,9 @@ window.addEventListener("stupidstate", (e) => {
   console.log("stupidstate: ", e);
 });
 
-window.stupidstate.registerService(component2.MyComponentService);
+const service = stupidstate.services["MyComponentService"];
 
-const stateService = window.stupidstate.services["MyComponentService"];
-console.log(stateService.getData());
-
-window.stupidstate.registerValue("stateVar", "hello");
-
-window.stupidstate.values["stateVar"].value = "goodbye";
-
-console.log("should be goodbye: ", window.stupidstate.values["stateVar"].value);
+(async () => {
+  const data = await service.getData();
+  console.log(data);
+})();

@@ -3,25 +3,32 @@ const stupidstate = {
   values: {},
 
   serviceHandler: {
-    set(target, name, value) {
-      // TODO: Implement
+    get(target, property, receiver) {
+      if (property === "getData") {
+        return function () {
+          if (!target.data) {
+            window.dispatchEvent(
+              new CustomEvent("stupidstate", {
+                detail: {
+                  definition: property,
+                  name: "changedService",
+                },
+              })
+            );
+          }
+          return target.getData.apply(target, arguments);
+        };
+      }
 
-      window.dispatchEvent(
-        new CustomEvent("stupidstate", {
-          detail: {
-            name: "changedService",
-          },
-        })
-      );
-
-      throw Error("not implemented");
+      // For other properties/methods, return them as usual
+      return Reflect.get(target, property, receiver);
     },
   },
 
   valueHandler: {
-    set(target, name, value) {
+    set(target, property, value) {
       // don't do anything if the value hasn't changed
-      if (name === "value" && target[name] === value) {
+      if (property === "value" && target[property] === value) {
         return false;
       }
 
@@ -29,9 +36,9 @@ const stupidstate = {
         new CustomEvent("stupidstate", {
           detail: {
             name: "changedValue",
-            definition: name,
-            oldValue: target[name],
-            value: (target[name] = value),
+            definition: property,
+            oldValue: target[property],
+            value: (target[property] = value),
           },
         })
       );
@@ -74,6 +81,7 @@ const stupidstate = {
    * @return {class} the registered service
    */
   registerService(service) {
+    this.validateService(service);
     if (!this.services[service.name]) {
       this.services[service.name] = new Proxy(
         new service(),
@@ -94,6 +102,12 @@ const stupidstate = {
       );
     }
     return this.services[service.name];
+  },
+
+  validateService(service) {
+    if (service.prototype.getData === undefined) {
+      throw Error(`Service ${service.name} must have a getData() method!`);
+    }
   },
 };
 
